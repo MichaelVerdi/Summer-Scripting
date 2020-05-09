@@ -1,9 +1,6 @@
-
-
-
 #!/bin/bash
-
-
+#Written By Michael Verdi
+#Designed to set up a basic hardened Apache server on Centos 7 minimal
 
 
 if(( $EUID != 0 )); then
@@ -12,7 +9,7 @@ if(( $EUID != 0 )); then
    exit
 fi
 
-
+#Initial firewall and Apache server setup, no data is added 
 if [ $EUID == 0 ];
 then
     echo "Starting setup..."
@@ -32,7 +29,7 @@ then
     firewall-cmd --reload
 fi
 
-
+#Hardening for Tokens, directory traversal and Options
 if(( `systemctl is-active httpd` == 0 ));
 then
    echo "Securing http"
