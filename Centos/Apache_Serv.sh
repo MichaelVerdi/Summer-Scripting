@@ -8,6 +8,14 @@ if(( $EUID != 0 )); then
 
    exit
 fi
+#working on removing privilege account and segregating apache/making non default location
+#if [$EUID == 0 ];
+#then
+#   echo "Apache Account Setup"
+   
+#   groupadd apache
+
+#   useradd -G apache apache
 
 #Initial firewall and Apache server setup, no data is added 
 if [ $EUID == 0 ];
@@ -47,9 +55,20 @@ then
    echo 'TraceEnable off' >> httpd.conf
 
    echo 'Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure' >> httpd.conf 
+   
+   echo 'Header always append X-Frame-Options SAMEORIGIN' >> httpd.conf
 
+   echo 'Header set X-XSS-Protection "1; mode=block"' >> httpd.conf
+   
+   echo 'Whats your desired timeout value(rec 60)'
+  
+   read vartime
+    
+   echo 'Timeout $vartime' >> httpd.conf 
+   
    sed -i '144s/Options Indexes FollowSymLinks/Options None/' httpd.conf
    
+    
    systemctl restart httpd
 
 fi
@@ -79,5 +98,9 @@ fi
 if (( `systemctl is-active httpd` == 0 ));
 then
   echo "Post Mod security Work..."
-
+  
+  cd /etc/httpd/conf.d 
+  
+  cp modsecurity.conf modsecurity.conf.old
+  
 fi  
