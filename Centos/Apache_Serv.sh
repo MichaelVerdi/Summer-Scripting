@@ -14,8 +14,6 @@ if [ $EUID == 0 ];
 then
     echo "Starting setup..."
     
-    dhclient
-   
     yum install httpd -y
    
     systemctl enable httpd
@@ -42,6 +40,14 @@ then
    
    echo 'TraceEnable off' >> httpd.conf
    
+   echo 'FileETag None' >> httpd.conf
+  
+   printf "<LimitExcept GET POST HEAD>\ndeny from all\n</LimitExcept>\n" >> httpd.conf
+
+   echo 'TraceEnable off' >> httpd.conf
+
+   echo 'Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure' >> httpd.conf 
+
    sed -i '144s/Options Indexes FollowSymLinks/Options None/' httpd.conf
    
    systemctl restart httpd
@@ -54,7 +60,7 @@ then
   
   echo "This Page was made from your script">/var/www/html/index.html
   
-  cd /etc/htpd/conf.d
+  cd /etc/httpd/conf.d
   
   mv welcome.conf old_hpage
   
@@ -65,5 +71,13 @@ then
   httpd -M | grep security
   
   systemctl restart httpd
+ 
+  tail /etc/httpd/logs/error_log
 
 fi
+
+if (( `systemctl is-active httpd` == 0 ));
+then
+  echo "Post Mod security Work..."
+
+fi  
