@@ -26,7 +26,7 @@ After=network.target
 
 Type=simple
 
-ExecStart=/var/tmp/test_script.sh
+ExecStart=${var1}/${var2}.sh
 
 TimeoutStartSec=0
 
