@@ -130,9 +130,5 @@ then
 
    nginx -t
 
-
-
-   
-
-
+fi
 
