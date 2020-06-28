@@ -44,14 +44,95 @@ then
    
    apt get update && apt-get install kibana
 
-   sudo vi /etc/kibana/kibana.yml
+   hostname -i = `1`
+
+   sed -i 's/elasticsearch.hosts:/elasticsearch.hosts: "https:$1:9200"
  
+   sed -i 's/server.host:/server.host:/server.host: "0.0.0.0" 
+
    echo "Testing kibana service" 
    
+   systemctl enable kibana
+
+   systemctl start kibana
+
+   systemctl status kibana
+
+   echo "Setting up Logstash"
+
+   apt-get install logstash
+
+   cd /etc/logstash/conf.d/
+
+   touch base.conf
+
+   echo 'input { ' >> base.conf
    
+   echo '} ' >> base.conf
+
+   echo 'filter {' >> base.conf
+
+   echo '}' >> base.conf
+
+   echo 'output {' >> base.conf
+
+   echo '    elasticsearch { ' >> base.conf
+
+   echo '    hosts -> ["localhost:9200"] ' >> base.conf
+
+   echo '    } ' >> base.conf
+
+   echo '}' >> base.conf
+
+   echo "Installing NGINX"
+
+   apt-get install nginx -y
+
+   sudo -v
+
+   echo "kibadmin:'openssl passwd -apr1'" | sudo tee -a /etc/nginx/htpasswd.users
+
+   mv /etc/nginx/sites-available/default  /etc/nginx/sites-available/original_backup_default
+
+   cd /etc/nginx/sites-available/
+
+   touch default
+
+   echo 'server { ' >> default
+
+   echo '    listen 80;' >> default
+
+   echo '    server_name $1;' >> default
+
+   echo '    auth_basic "Restricted Access"; ' >> default
+
+   echo '    auth_basic_user_file /etc/nginx/htpasswd.users; ' >> default
+
+   echo '    location / { ' >> default
+
+   echo '        proxy_pass http://localhost:5601; ' >> default
+
+   echo '        proxy_http_version 1.1;' >> default
+
+   echo '        proxy_set_header Upgrade $http_upgrade; ' >> default
+
+   echo '        proxy_set_header Connection 'upgrade'; ' >> default
+
+   echo '        proxy_set_header Host $host; ' >> default
+
+   echo '        proxy_cache_bypass $http_upgrade; ' >> default
+
+   echo '   } ' >> default
+
+   echo ' } ' >> default
+
+   echo " Testing Nginx..."
+
+   nginx -t
 
 
 
+   
 
 
 
