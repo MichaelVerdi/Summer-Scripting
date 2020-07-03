@@ -16,13 +16,9 @@ then
   
    echo "Beginning Elk Build..."
    
-   sudo apt-get update   
-
-   sudo add-apt-repository ppa:webupd8team/java
-   
-   sudo apt-get install oracle-java8-installer
+   sudo apt-get update  
   
-   wget -q0 - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+   wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
 
    apt-get install apt-transport-https
 
@@ -44,11 +40,11 @@ then
    
    apt get update && apt-get install kibana
 
-   hostname -i = `1`
+   hostname -I = `1`
 
-   sed -i 's/elasticsearch.hosts:/elasticsearch.hosts: "https:$1:9200"
+   sed -i 's/elasticsearch.hosts:/elasticsearch.hosts: "https:$1:9200"'
  
-   sed -i 's/server.host:/server.host:/server.host: "0.0.0.0" 
+   sed -i 's/server.host:/server.host:/server.host: "0.0.0.0"' 
 
    echo "Testing kibana service" 
    
@@ -60,7 +56,7 @@ then
 
    echo "Setting up Logstash"
 
-   apt-get install logstash
+   apt-get update && apt-get install logstash
 
    cd /etc/logstash/conf.d/
 
